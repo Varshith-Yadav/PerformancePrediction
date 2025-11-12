@@ -1,25 +1,15 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
-import numpy as np
-import tensorflow as tf
-import joblib
+from model.train import train_model
+from model.predict import predict_next
 
-app = FastAPI()
+app = FastAPI(title="LMS Performance Forecasting")
 
-model = tf.keras.models.load_model("server_load_forecaster.h5")
-scaler = joblib.load("scaler.pkl")
+@app.post("/train")
+def train():
+    msg = train_model()
+    return {"status": msg}
 
-class LoadInput(BaseModel):
-    past_loads: list  
-
-@app.post("/forecast")
-def forecast_load(data: LoadInput):
-    arr = np.array(data.past_loads).reshape(-1, 1)
-    arr_scaled = scaler.transform(arr)
-    arr_scaled = arr_scaled.reshape((1, len(arr_scaled), 1))
-
-    prediction = model.predict(arr_scaled)
-    predicted_load = scaler.inverse_transform(prediction)
-    return {"predicted_load": float(predicted_load[0][0])}
-
-
+@app.get("/predict")
+def predict():
+    pred = predict_next()
+    return {"predicted_cpu_usage": pred}
