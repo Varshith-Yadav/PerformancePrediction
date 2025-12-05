@@ -206,12 +206,6 @@ curl http://localhost:8000/crash-risk
 curl http://localhost:8000/metrics/server_load?hours=48
 ```
 
-## Monitoring Dashboard
-
-You can integrate this API with monitoring dashboards like:
-- Grafana
-- Prometheus
-- Custom web dashboards
 
 ## Database Configuration
 
